@@ -1,5 +1,6 @@
 package com.example.coffeeManiac;
 
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.repository.CrudRepository;
@@ -75,6 +76,28 @@ class RestApiDemoController {
 				? new ResponseEntity<>(coffeeRepository.save(coffee), HttpStatus.OK)
 				: new ResponseEntity<>(coffeeRepository.save(coffee), HttpStatus.CREATED);
 	}
+
+
+	@PatchMapping("{id}")
+	public ResponseEntity<String> updateCoffee( @PathVariable("id") String id,
+											 @RequestBody Coffee coffee) {
+		Optional<Coffee> coffeeOptional = coffeeRepository.findById(id);
+		if (!coffeeOptional.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		if (coffee.getName()!= null) {
+			coffee.setName(coffee.getName());
+		}
+
+		coffeeRepository.save(coffee);
+
+		return ResponseEntity.ok("updated");
+
+	}
+
+
+
 
 	@DeleteMapping("/{id}")
 	void deleteCoffee(@PathVariable String id) {
